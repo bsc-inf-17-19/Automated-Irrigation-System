@@ -48,11 +48,34 @@ class _IrrigationPageState extends State<IrrigationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Smart Irrigation System'),
-        actions: [IconButton(icon: Icon(Icons.menu),
-        onPressed: (){
-      //it should handle menu button
-    }),
-      ],
+        actions: [
+          PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'Notification',
+                child: Text('Notification'),
+              ),
+              PopupMenuItem<String>(
+                value: 'History',
+                child: Text('History'),
+              ),
+              PopupMenuItem<String>(
+                value: 'Log out',
+                child: Text('Log out'),
+              ),
+            ],
+            onSelected: (String value) {
+              // Handle menu item selection
+              if (value == 'Notification') {
+                // Handle notification
+              } else if (value == 'History') {
+                // Handle history
+              } else if (value == 'Log out') {
+                // Handle logout
+              }
+            },
+          ),
+        ],
         centerTitle: true,
         backgroundColor: Color(0xFFD9D9D9),
       ),
