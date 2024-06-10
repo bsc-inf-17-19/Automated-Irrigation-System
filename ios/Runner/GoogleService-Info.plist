@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>534045033205-uq68dt203417b53it0842393721nct0h.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.534045033205-uq68dt203417b53it0842393721nct0h</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAtGNIMEzYllzZMX3x9qu4_TGDueLsgF8U</string>
+	<key>GCM_SENDER_ID</key>
+	<string>534045033205</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.smartIrrigationSystem</string>
+	<key>PROJECT_ID</key>
+	<string>automated-irrigation-sys-4d93e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>automated-irrigation-sys-4d93e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:534045033205:ios:5fb54f4f52aad84fdafbbc</string>
+	<key>DATABASE_URL</key>
+	<string>https://automated-irrigation-sys-4d93e-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

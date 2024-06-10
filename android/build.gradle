@@ -1,3 +1,16 @@
+buildscript {
+    ext.kotlin_version = '1.9.24'  // Updated to a known stable version
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'  // Updated to a known stable version
+        classpath 'com.google.gms:google-services:4.4.2'  // Verify the latest version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -8,8 +21,6 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
 }
 

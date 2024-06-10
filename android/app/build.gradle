@@ -1,11 +1,9 @@
-// android/app/build.gradle
 plugins {
-    id "com.android.application"
-    // START: FlutterFire Configuration
-    id 'com.google.gms.google-services' // Keep this line
-    // END: FlutterFire Configuration
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'kotlin-android'
+    id 'dev.flutter.flutter-gradle-plugin'
+
 }
 
 def localProperties = new Properties()
@@ -63,11 +61,11 @@ flutter {
     source '../..'
 }
 
+// Adding the dependencies
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation platform('com.google.firebase:firebase-bom:33.1.0')
     implementation 'com.google.firebase:firebase-analytics'
-    // Add other Firebase dependencies as needed
+    implementation 'com.google.firebase:firebase-database'
 }
 
-// Add the following line at the bottom
 apply plugin: 'com.google.gms.google-services'

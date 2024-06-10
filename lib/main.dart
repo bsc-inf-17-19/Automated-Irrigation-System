@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'esp_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'firebase_options.dart';
 
-// ...
-
-void main() async{
-    WidgetsFlutterBinding.ensureInitialized();
-     await Firebase.initializeApp(
-       options: DefaultFirebaseOptions.currentPlatform,
-     );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -34,44 +32,48 @@ class IrrigationPage extends StatefulWidget {
 }
 
 class _IrrigationPageState extends State<IrrigationPage> {
-  //String temperature = 'N/A';
   String moisture = 'N/A';
-  // String humidity = 'N/A';
-  // String sunlight = 'N/A';
-  // String battery = 'N/A';
-  // String irrigationStatus = 'N/A';
-
   final TextEditingController _textFieldController = TextEditingController();
-  final ESPService espService = ESPService('http://192.168.137.178');
+  late DatabaseReference _databaseReference;
 
   @override
   void initState() {
     super.initState();
-    getMoistureData();
+    _databaseReference = FirebaseDatabase.instance.ref();
+    _readMoistureData();
   }
 
-  Future<void> getMoistureData() async {
-    try {
-      final data = await espService.fetchData();
+  void _readMoistureData() {
+    // Fetch initial data
+    _databaseReference.child('/sensors/sensorId1/data/moisture').get().then((DataSnapshot snapshot) {
+      final data = snapshot.value;
+      if (data != null) {
+        setState(() {
+          moisture = data.toString();
+        });
+      } else {
+        setState(() {
+          moisture = 'N/A';
+        });
+      }
+    }).catchError((error) {
+      print('Failed to read moisture data: $error');
       setState(() {
-        // temperature = data['temperature'].toString();
-        moisture = data['moisture'].toString();
-        // humidity = data['humidity'].toString();
-        // sunlight = data['sunlight'].toString();
-        // battery = data['battery'].toString();
-        // irrigationStatus = data['irrigationStatus'].toString();
+        moisture = 'N/A';
       });
-    } catch (e) {
-      print("Error in fetching data: $e");
-      setState(() {
-        // temperature = 'Error';
-        moisture = 'Error';
-        // humidity = 'Error';
-        // sunlight = 'Error';
-        // battery = 'Error';
-        // irrigationStatus = 'Error';
-      });
-    }
+    });
+
+    // Listen for real-time updates
+    _databaseReference.child('/sensors/sensorId1/data/moisture').onValue.listen((DatabaseEvent event) {
+      final data = event.snapshot.value;
+      if (data != null) {
+        setState(() {
+          moisture = data.toString();
+        });
+      }
+    }, onError: (error) {
+      print('Failed to listen for moisture data: $error');
+    });
   }
 
   @override
@@ -117,39 +119,6 @@ class _IrrigationPageState extends State<IrrigationPage> {
         decoration: BoxDecoration(color: Color(0x931E3D6C)),
         child: Stack(
           children: [
-            // Positioned(
-            //   left: 65,
-            //   top: 230,
-            //   child: Icon(Icons.thermostat, color: Colors.white, size: 90),
-            // ),
-            // Positioned(
-            //   left: 51,
-            //   top: 315,
-            //   child: Text(
-            //     'Temperature: $temperature°C',
-            //     style: TextStyle(
-            //       color: Colors.white.withOpacity(0.7),
-            //       fontSize: 16,
-            //       fontFamily: 'Inter',
-            //       fontWeight: FontWeight.w400,
-            //       height: 0,
-            //     ),
-            //   ),
-            // ),
-            // Positioned(
-            //   left: 100,
-            //   top: 165,
-            //   child: Text(
-            //     "IRRIGATION STATUS: $irrigationStatus",
-            //     style: TextStyle(
-            //       color: Colors.white.withOpacity(0.7),
-            //       fontSize: 17,
-            //       fontFamily: 'Inter',
-            //       fontWeight: FontWeight.w400,
-            //       height: 0,
-            //     ),
-            //   ),
-            // ),
             Positioned(
               left: 245,
               top: 100,
@@ -215,65 +184,6 @@ class _IrrigationPageState extends State<IrrigationPage> {
                 ),
               ),
             ),
-            // Positioned(
-            //   left: 255,
-            //   top: 240,
-            //   child: Icon(Icons.wb_sunny, color: Colors.white, size: 78),
-            // ),
-            // Positioned(
-            //   left: 245,
-            //   top: 315,
-            //   child: Text(
-            //     'Sunlight: $sunlight',
-            //     style: TextStyle(
-            //       color: Colors.white.withOpacity(0.7),
-            //       fontSize: 16,
-            //       fontFamily: 'Inter',
-            //       fontWeight: FontWeight.w400,
-            //       height: 0,
-            //     ),
-            //   ),
-            // ),
-            // Positioned(
-            //   left: 251,
-            //   top: 380,
-            //   child: Icon(Icons.opacity, color: Colors.white, size: 78),
-            // ),
-            // Positioned(
-            //   left: 245,
-            //   top: 463,
-            //   child: Text(
-            //     'Humidity: $humidity%',
-            //     style: TextStyle(
-            //       color: Colors.white.withOpacity(0.7),
-            //       fontSize: 16,
-            //       fontFamily: 'Inter',
-            //       fontWeight: FontWeight.w400,
-            //       height: 0,
-            //     ),
-            //   ),
-            // ),
-            // Positioned(
-            //   left: 151,
-            //   top: 530,
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Icon(Icons.battery_5_bar_outlined, color: Colors.white, size: 90),
-            //       SizedBox(height: 10),
-            //       Text(
-            //         'Battery: $battery%',
-            //         style: TextStyle(
-            //           color: Colors.white.withOpacity(0.7),
-            //           fontSize: 16,
-            //           fontFamily: 'Inter',
-            //           fontWeight: FontWeight.w400,
-            //           height: 0,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             Positioned(
               left: 80,
               top: 380,
