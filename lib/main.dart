@@ -45,11 +45,13 @@ class _IrrigationPageState extends State<IrrigationPage> {
 
   void _readMoistureData() {
     // Fetch initial data
-    _databaseReference.child('/sensors/sensorId1/data/moisture').get().then((DataSnapshot snapshot) {
-      final data = snapshot.value;
-      if (data != null) {
-        setState(() {
-          moisture = data.toString();
+    _databaseReference.child('/sensors/sensorId1/data').orderByKey().limitToLast(1).get().then((DataSnapshot snapshot) {
+      if (snapshot.exists) {
+        Map data = snapshot.value as Map;
+        data.forEach((key, value) {
+          setState(() {
+            moisture = value['value'].toString();
+          });
         });
       } else {
         setState(() {
@@ -64,11 +66,13 @@ class _IrrigationPageState extends State<IrrigationPage> {
     });
 
     // Listen for real-time updates
-    _databaseReference.child('/sensors/sensorId1/data/moisture').onValue.listen((DatabaseEvent event) {
-      final data = event.snapshot.value;
-      if (data != null) {
-        setState(() {
-          moisture = data.toString();
+    _databaseReference.child('/sensors/sensorId1/data').orderByKey().limitToLast(1).onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.exists) {
+        Map data = event.snapshot.value as Map;
+        data.forEach((key, value) {
+          setState(() {
+            moisture = value['value'].toString();
+          });
         });
       }
     }, onError: (error) {
