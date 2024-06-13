@@ -51,6 +51,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
         data.forEach((key, value) {
           setState(() {
             moisture = value['value'].toString();
+            _showMoistureNotification(double.tryParse(moisture) ?? -1);
           });
         });
       } else {
@@ -72,12 +73,46 @@ class _IrrigationPageState extends State<IrrigationPage> {
         data.forEach((key, value) {
           setState(() {
             moisture = value['value'].toString();
+            _showMoistureNotification(double.tryParse(moisture) ?? -1);
           });
         });
       }
     }, onError: (error) {
       print('Failed to listen for moisture data: $error');
     });
+  }
+
+  void _showMoistureNotification(double moistureValue) {
+    String message = '';
+    if (moistureValue == 0) {
+      message = 'No moisture';
+    } else if (moistureValue < 20) {
+      message = 'Low moisture';
+    } else if (moistureValue >= 30 && moistureValue <= 60) {
+      message = 'Moderate moisture';
+    } else if (moistureValue > 70) {
+      message = 'High moisture';
+    } else {
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Moisture Alert'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _sendCropSelection(String crop) {
