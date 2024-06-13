@@ -110,8 +110,8 @@ class _IrrigationPageState extends State<IrrigationPage> {
                 child: Text('Notification'),
               ),
               PopupMenuItem<String>(
-                value: 'History',
-                child: Text('History'),
+                value: 'Refresh',
+                child: Text('Refresh'),
               ),
               PopupMenuItem<String>(
                 value: 'Log out',
@@ -122,7 +122,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
               // Handle menu item selection
               if (value == 'Notification') {
                 // Handle notification
-              } else if (value == 'History') {
+              } else if (value == 'Refresh') {
                 // Handle history
               } else if (value == 'Log out') {
                 // Handle logout
