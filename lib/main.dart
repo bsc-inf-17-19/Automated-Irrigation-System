@@ -80,6 +80,23 @@ class _IrrigationPageState extends State<IrrigationPage> {
     });
   }
 
+  void _sendCropSelection(String crop) {
+    int valueToSend;
+    if (crop == 'Maize') {
+      valueToSend = 60;
+    } else if (crop == 'Onion') {
+      valueToSend = 40; // Example value for Onion
+    } else {
+      return;
+    }
+
+    _databaseReference.child('/selectedCrop').set({'crop': crop, 'value': valueToSend}).then((_) {
+      print('Crop selection updated successfully');
+    }).catchError((error) {
+      print('Failed to update crop selection: $error');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,6 +199,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
                       ],
                       onSelected: (String value) {
                         _textFieldController.text = value;
+                        _sendCropSelection(value);
                       },
                     ),
                   ],
