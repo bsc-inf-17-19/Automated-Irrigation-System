@@ -166,62 +166,69 @@ class _IrrigationPageState extends State<IrrigationPage> {
           ),
         ],
         centerTitle: true,
-        backgroundColor: Color(0xFFD9D9D9),
+        backgroundColor: Colors.teal,
       ),
       body: Container(
-        width: 853,
-        height: 953,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(color: Color(0x931E3D6C)),
-        child: Stack(
-          children: [
-            Positioned(
-              left: 245,
-              top: 100,
-              child: ElevatedButton(
-                key: Key('statistics_button_key'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => StatisticsPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFD9D9D9),
-                  foregroundColor: Colors.white,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.teal, Colors.green],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                child: Text('Statistics'),
-              ),
-            ),
-            Positioned(
-              left: 51,
-              top: 100,
-              child: Container(
-                width: 170,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        key: Key('crops_textField'),
-                        controller: _textFieldController,
-                        decoration: InputDecoration(
-                          hintText: 'Choose crop',
-                          hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
-                          fillColor: Colors.white,
-                          filled: true,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide.none,
-                          ),
+                elevation: 8,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Soil Moisture',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
                         ),
-                        onChanged: (value) {
-                          // Handle text field changes
-                        },
                       ),
+                      SizedBox(height: 10),
+                      Text(
+                        '$moisture',
+                        style: TextStyle(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: 300,
+                child: TextField(
+                  key: Key('crops_textField'),
+                  controller: _textFieldController,
+                  decoration: InputDecoration(
+                    hintText: 'Choose crop',
+                    hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
                     ),
-                    PopupMenuButton<String>(
-                      icon: Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                    suffixIcon: PopupMenuButton<String>(
+                      icon: Icon(Icons.keyboard_arrow_down, color: Colors.teal),
                       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                         PopupMenuItem<String>(
                           value: 'Maize',
@@ -237,30 +244,33 @@ class _IrrigationPageState extends State<IrrigationPage> {
                         _sendCropSelection(value);
                       },
                     ),
-                  ],
+                  ),
+                  onChanged: (value) {
+                    // Handle text field changes
+                  },
                 ),
               ),
-            ),
-            Positioned(
-              left: 80,
-              top: 380,
-              child: Icon(Icons.water, color: Colors.white, size: 78),
-            ),
-            Positioned(
-              left: 51,
-              top: 463,
-              child: Text(
-                'Soil Moisture: $moisture',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
-                  fontSize: 16,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
+              SizedBox(height: 20),
+              ElevatedButton(
+                key: Key('statistics_button_key'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StatisticsPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
+                child: Text('Statistics'),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -273,9 +283,16 @@ class StatisticsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Statistics'),
+        backgroundColor: Colors.teal,
       ),
       body: Center(
-        child: Text('Statistics Page'),
+        child: Text(
+          'Statistics Page',
+          style: TextStyle(
+            fontSize: 24,
+            color: Colors.teal,
+          ),
+        ),
       ),
     );
   }
