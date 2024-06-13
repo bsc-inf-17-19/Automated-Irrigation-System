@@ -50,8 +50,8 @@ class _IrrigationPageState extends State<IrrigationPage> {
         Map data = snapshot.value as Map;
         data.forEach((key, value) {
           setState(() {
-            moisture = value['value'].toString();
-            _showMoistureNotification(double.tryParse(moisture) ?? -1);
+            moisture = value['value'].toString() + '%';
+            _showMoistureNotification(double.tryParse(value['value'].toString()) ?? -1);
           });
         });
       } else {
@@ -72,8 +72,8 @@ class _IrrigationPageState extends State<IrrigationPage> {
         Map data = event.snapshot.value as Map;
         data.forEach((key, value) {
           setState(() {
-            moisture = value['value'].toString();
-            _showMoistureNotification(double.tryParse(moisture) ?? -1);
+            moisture = value['value'].toString() + '%';
+            _showMoistureNotification(double.tryParse(value['value'].toString()) ?? -1);
           });
         });
       }
@@ -200,7 +200,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        '$moisture',
+                        moisture,
                         style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
