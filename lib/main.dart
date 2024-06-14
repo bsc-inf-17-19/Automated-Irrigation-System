@@ -33,6 +33,7 @@ class IrrigationPage extends StatefulWidget {
 
 class _IrrigationPageState extends State<IrrigationPage> {
   String moisture = 'N/A';
+  String relayStatus = 'N/A';
   final TextEditingController _textFieldController = TextEditingController();
   late DatabaseReference _databaseReference;
 
@@ -41,6 +42,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
     super.initState();
     _databaseReference = FirebaseDatabase.instance.ref();
     _readMoistureData();
+    _readRelayStatus();
   }
 
   void _readMoistureData() {
@@ -79,6 +81,37 @@ class _IrrigationPageState extends State<IrrigationPage> {
       }
     }, onError: (error) {
       print('Failed to listen for moisture data: $error');
+    });
+  }
+
+  void _readRelayStatus() {
+    // Fetch relay status data
+    _databaseReference.child('/relays/relayId1/status').get().then((DataSnapshot snapshot) {
+      if (snapshot.exists) {
+        setState(() {
+          relayStatus = snapshot.value.toString();
+        });
+      } else {
+        setState(() {
+          relayStatus = 'N/A';
+        });
+      }
+    }).catchError((error) {
+      print('Failed to read relay status: $error');
+      setState(() {
+        relayStatus = 'N/A';
+      });
+    });
+
+    // Listen for real-time updates
+    _databaseReference.child('/relays/relayId1/status').onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.exists) {
+        setState(() {
+          relayStatus = event.snapshot.value.toString();
+        });
+      }
+    }, onError: (error) {
+      print('Failed to listen for relay status: $error');
     });
   }
 
@@ -176,124 +209,134 @@ class _IrrigationPageState extends State<IrrigationPage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                elevation: 8,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Soil Moisture',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        moisture,
-                        style: TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ],
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Relay Status: $relayStatus',
+                  style: TextStyle(
+                    fontSize: 4,
+                    color: Colors.white,
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                width: 300,
-                child: TextField(
-                  key: Key('crops_textField'),
-                  controller: _textFieldController,
-                  decoration: InputDecoration(
-                    hintText: 'Choose crop',
-                    hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide.none,
+                SizedBox(height: 100),
+                Container(
+                  width: 300,
+                  child: TextField(
+                    key: Key('crops_textField'),
+                    controller: _textFieldController,
+                    decoration: InputDecoration(
+                      hintText: 'Choose crop',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: PopupMenuButton<String>(
+                        icon: Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                          PopupMenuItem<String>(
+                            value: 'Maize',
+                            child: Text('Maize'),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'Onion',
+                            child: Text('Onion'),
+                          ),
+                        ],
+                        onSelected: (String value) {
+                          _textFieldController.text = value;
+                          _sendCropSelection(value);
+                        },
+                      ),
                     ),
-                    suffixIcon: PopupMenuButton<String>(
-                      icon: Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                        PopupMenuItem<String>(
-                          value: 'Maize',
-                          child: Text('Maize'),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'Onion',
-                          child: Text('Onion'),
-                        ),
-                      ],
-                      onSelected: (String value) {
-                        _textFieldController.text = value;
-                        _sendCropSelection(value);
-                      },
-                    ),
+                    onChanged: (value) {
+                      // Handle text field changes
+                    },
                   ),
-                  onChanged: (value) {
-                    // Handle text field changes
-                  },
                 ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                key: Key('statistics_button_key'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => StatisticsPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                SizedBox(height: 120),
+                Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Soil Moisture',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          moisture,
+                          style: TextStyle(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                child: Text('Statistics'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class StatisticsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Statistics'),
-        backgroundColor: Colors.teal,
-      ),
-      body: Center(
-        child: Text(
-          'Statistics Page',
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.teal,
-          ),
-        ),
-      ),
-    );
-  }
-}
+//                 SizedBox(height: 70),
+//                 ElevatedButton(
+//                   key: Key('statistics_button_key'),
+//                   onPressed: () {
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(builder: (context) => StatisticsPage()),
+//                     );
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: Colors.teal,
+//                     foregroundColor: Colors.white,
+//                     padding: EdgeInsets.symmetric(horizontal: 70, vertical: 20),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(15),
+//                     ),
+//                   ),
+//                   child: Text('Statistics'),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class StatisticsPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Statistics'),
+//         backgroundColor: Colors.teal,
+//       ),
+//       body: Center(
+//         child: Text(
+//           'Statistics Page',
+//           style: TextStyle(
+//             fontSize: 24,
+//             color: Colors.teal,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
