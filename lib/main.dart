@@ -33,7 +33,6 @@ class IrrigationPage extends StatefulWidget {
 
 class _IrrigationPageState extends State<IrrigationPage> {
   String moisture = 'N/A';
-  String relayStatus = 'N/A';
   final TextEditingController _textFieldController = TextEditingController();
   late DatabaseReference _databaseReference;
 
@@ -42,7 +41,6 @@ class _IrrigationPageState extends State<IrrigationPage> {
     super.initState();
     _databaseReference = FirebaseDatabase.instance.ref();
     _readMoistureData();
-    _readRelayStatus();
   }
 
   void _readMoistureData() {
@@ -84,37 +82,6 @@ class _IrrigationPageState extends State<IrrigationPage> {
     });
   }
 
-  void _readRelayStatus() {
-    // Fetch relay status data
-    _databaseReference.child('/relays/relayId1/status').get().then((DataSnapshot snapshot) {
-      if (snapshot.exists) {
-        setState(() {
-          relayStatus = snapshot.value.toString();
-        });
-      } else {
-        setState(() {
-          relayStatus = 'N/A';
-        });
-      }
-    }).catchError((error) {
-      print('Failed to read relay status: $error');
-      setState(() {
-        relayStatus = 'N/A';
-      });
-    });
-
-    // Listen for real-time updates
-    _databaseReference.child('/relays/relayId1/status').onValue.listen((DatabaseEvent event) {
-      if (event.snapshot.exists) {
-        setState(() {
-          relayStatus = event.snapshot.value.toString();
-        });
-      }
-    }, onError: (error) {
-      print('Failed to listen for relay status: $error');
-    });
-  }
-
   void _showMoistureNotification(double moistureValue) {
     String message = '';
     if (moistureValue == 0) {
@@ -152,7 +119,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
     int valueToSend;
     if (crop == 'Maize') {
       valueToSend = 60;
-    } else if (crop == 'Rice') {
+    } else if (crop == 'Onion') {
       valueToSend = 40; // Example value for Onion
     } else {
       return;
@@ -215,14 +182,6 @@ class _IrrigationPageState extends State<IrrigationPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Relay Status: $relayStatus',
-                  style: TextStyle(
-                    fontSize: 4,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 100),
                 Container(
                   width: 300,
                   child: TextField(
@@ -246,8 +205,8 @@ class _IrrigationPageState extends State<IrrigationPage> {
                             child: Text('Maize'),
                           ),
                           PopupMenuItem<String>(
-                            value: 'Onion',
-                            child: Text('Onion'),
+                            value: 'Rice',
+                            child: Text('Rice'),
                           ),
                         ],
                         onSelected: (String value) {
@@ -261,7 +220,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 120),
+                const SizedBox(height: 20),
                 Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -292,51 +251,51 @@ class _IrrigationPageState extends State<IrrigationPage> {
                     ),
                   ),
                 ),
-//                 SizedBox(height: 70),
-//                 ElevatedButton(
-//                   key: Key('statistics_button_key'),
-//                   onPressed: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => StatisticsPage()),
-//                     );
-//                   },
-//                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: Colors.teal,
-//                     foregroundColor: Colors.white,
-//                     padding: EdgeInsets.symmetric(horizontal: 70, vertical: 20),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(15),
-//                     ),
-//                   ),
-//                   child: Text('Statistics'),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// class StatisticsPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Statistics'),
-//         backgroundColor: Colors.teal,
-//       ),
-//       body: Center(
-//         child: Text(
-//           'Statistics Page',
-//           style: TextStyle(
-//             fontSize: 24,
-//             color: Colors.teal,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+                // SizedBox(height: 20),
+                // ElevatedButton(
+                //   key: Key('statistics_button_key'),
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => StatisticsPage()),
+                //     );
+                //   },
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: Colors.teal,
+                //     foregroundColor: Colors.white,
+                //     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(15),
+                //     ),
+                //   ),
+                //   child: Text('Statistics'),
+                // ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class StatisticsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Statistics'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Center(
+        child: Text(
+          'Statistics Page',
+          style: TextStyle(
+            fontSize: 24,
+            color: Colors.teal,
+          ),
+        ),
+      ),
+    );
+  }
+}
