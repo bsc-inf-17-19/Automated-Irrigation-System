@@ -152,7 +152,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
     int valueToSend;
     if (crop == 'Maize') {
       valueToSend = 60;
-    } else if (crop == 'Onion') {
+    } else if (crop == 'Rice') {
       valueToSend = 40; // Example value for Onion
     } else {
       return;
